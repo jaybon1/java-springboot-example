@@ -1,0 +1,84 @@
+plugins {
+    id 'java'
+    id 'org.springframework.boot' version '3.0.6'
+    id 'io.spring.dependency-management' version '1.1.0'
+    id 'com.epages.restdocs-api-spec' version "0.18.0"
+}
+
+ext {
+    port = 8080
+}
+
+group = 'com.example'
+version = '0.0.1-SNAPSHOT'
+sourceCompatibility = '17'
+
+configurations {
+    compileOnly {
+        extendsFrom annotationProcessor
+    }
+}
+
+repositories {
+    mavenCentral()
+}
+
+dependencies {
+    implementation 'org.springframework.boot:spring-boot-starter-data-jpa'
+    implementation 'org.springframework.boot:spring-boot-starter-web'
+    compileOnly 'org.projectlombok:lombok'
+    annotationProcessor 'org.projectlombok:lombok'
+//    testCompileOnly 'org.projectlombok:lombok'
+//    testAnnotationProcessor 'org.projectlombok:lombok'
+    developmentOnly 'org.springframework.boot:spring-boot-devtools'
+    runtimeOnly 'com.h2database:h2'
+    annotationProcessor 'org.springframework.boot:spring-boot-configuration-processor'
+    testImplementation 'org.springframework.boot:spring-boot-starter-test'
+
+    implementation 'org.springframework.boot:spring-boot-starter-validation'
+
+    implementation 'org.springframework.boot:spring-boot-starter-aop'
+
+	implementation 'org.springdoc:springdoc-openapi-starter-webmvc-ui:2.0.4'
+
+    testImplementation 'org.springframework.restdocs:spring-restdocs-mockmvc'
+
+    testImplementation('com.epages:restdocs-api-spec-mockmvc:0.18.0')
+    testImplementation('com.epages:restdocs-api-spec-webtestclient:0.18.0')
+
+}
+
+compileJava{
+    dependsOn 'clean'
+}
+
+openapi3 {
+    server = "http://localhost:${port}"
+    title = 'My API'
+    description = 'My API description'
+    version = '0.1.0'
+    format = 'json'
+}
+
+tasks.register('createOpenApi') {
+    dependsOn 'openapi3'
+    doLast {
+        copy {
+            from "build/api-spec"
+            include "*.json"
+            into "build/resources/main/static/springdoc"
+        }
+    }
+}
+
+bootRun {
+    dependsOn 'createOpenApi'
+}
+
+bootJar {
+    dependsOn 'createOpenApi'
+}
+
+tasks.named('test') {
+    useJUnitPlatform()
+}

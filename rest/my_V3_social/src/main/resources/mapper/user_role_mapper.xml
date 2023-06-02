@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.example.my.module.user.repository.UserRoleRepository">
+
+    <sql id="fullColumn">
+        idx,
+        user_idx,
+        role,
+        create_date,
+    </sql>
+
+
+    <select id="findByUserIdx" parameterType="java.lang.Integer" resultType="com.example.my.module.user.entity.UserRoleEntity">
+        SELECT <include refid="fullColumn"/>
+        FROM USER_ROLE
+        WHERE user_idx = #{userIdx}
+    </select>
+
+    <select id="findByUserIdxAndRole" resultType="com.example.my.module.user.entity.UserRoleEntity">
+        SELECT <include refid="fullColumn"/>
+        FROM USER_ROLE
+        WHERE user_idx = #{userIdx}
+            AND role like #{role}
+    </select>
+
+    <select id="findRoleByUserIdx" parameterType="java.lang.Integer" resultType="java.lang.String">
+        SELECT role
+        FROM USER_ROLE
+        WHERE user_idx = #{userIdx}
+    </select>
+
+    <insert id="insert" parameterType="com.example.my.module.user.entity.UserRoleEntity">
+        INSERT INTO USER_ROLE (
+            user_idx,
+            role,
+            create_date
+        )
+        VALUES (
+            #{userIdx},
+            #{role},
+            #{createDate}
+        )
+    </insert>
+
+</mapper>

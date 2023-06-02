@@ -1,0 +1,40 @@
+spring:
+  # thymeleaf:
+  #   cache: false
+  datasource:
+    #    url: jdbc:h2:~/test
+    url: jdbc:h2:mem:testdb;MODE=MySQL;DB_CLOSE_DELAY=-1
+    driverClassName: org.h2.Driver
+    username: sa
+    password:
+    # url: jdbc:mariadb://주소넣는곳:3306/temp?characterEncoding=utf-8&serverTimezone=Asia/Seoul
+    # driverClassName: org.mariadb.jdbc.Driver
+    # username: root
+    # password: green123
+  h2:
+    console:
+      enabled: true
+      path: /h2
+  sql:
+    init:
+      encoding: UTF-8
+      schemaLocations: classpath:h2/schema.sql
+      dataLocations: classpath:h2/data.sql
+      mode: always
+  mvc:
+    view:
+      prefix: /WEB-INF/views/
+      suffix: .jsp
+
+server:
+  servlet:
+    encoding:
+      charset: utf-8
+      enabled: true
+      force: true
+  port: 8070
+
+mybatis:
+  configuration:
+    map-underscore-to-camel-case: true
+

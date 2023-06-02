@@ -1,0 +1,94 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<!-- 사용안함-->
+
+<mapper namespace="com.example.project.todo.repository.TodoRepository">
+    <resultMap id="TodoResultMap" type="com.example.project.todo.entity.TodoEntity">
+        <result column="idx" property="idx" jdbcType="NUMERIC" />
+        <result column="content" property="content" jdbcType="VARCHAR" />
+        <result column="done_yn" property="doneYn" jdbcType="VARCHAR" />
+        <result column="delete_yn" property="deleteYn" jdbcType="VARCHAR" />
+        <result column="create_date" property="createDate" jdbcType="TIMESTAMP" />
+        <result column="update_date" property="updateDate" jdbcType="TIMESTAMP" />
+        <result column="delete_date" property="deleteDate" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+    <sql id="commonColumn">
+        idx,
+        content,
+        done_yn,
+        delete_yn,
+        create_date,
+        update_date,
+        delete_date
+    </sql>
+
+    <select id="findByDeleteYn" resultMap="TodoResultMap">
+        SELECT <include refid="commonColumn"/>
+        FROM TODO
+        WHERE delete_yn = 'N'
+    </select>
+
+    <select id="findAllByDoneYn" parameterType="String" resultMap="TodoResultMap">
+        SELECT <include refid="commonColumn"/>
+        FROM TODO
+        WHERE delete_yn = 'N'
+            AND done_yn = #{doneYn}
+    </select>
+
+    <select id="findByIdx" parameterType="Integer" resultMap="TodoResultMap">
+        SELECT <include refid="commonColumn"/>
+        FROM TODO
+        WHERE idx = #{idx}
+            AND delete_yn = 'N'
+    </select>
+
+    <insert id="insert" parameterType="com.example.project.todo.entity.TodoEntity">
+        INSERT INTO TODO (
+            content,
+            done_yn,
+            delete_yn,
+            create_date
+        )
+        VALUES (
+            #{content},
+            #{doneYn},
+            #{deleteYn},
+            #{createDate}
+        )
+    </insert>
+
+
+    <update id="update" parameterType="com.example.project.todo.entity.TodoEntity">
+        UPDATE 	TODO
+		SET     content = #{content},
+                done_yn = #{doneYn},
+                delete_yn = #{deleteYn},
+                create_date = #{createDate},
+                update_date = #{updateDate},
+                delete_date = #{deleteDate}
+		WHERE	idx = #{idx}
+    </update>
+
+    <!--    <select id="findByIdxAndEnv" parameterType="com.example.demo20210724.entity.TodoEntity" resultMap="TodoResultMap">-->
+    <!--        SELECT <include refid="commonColumn"/>-->
+    <!--        FROM TODO-->
+    <!--        WHERE idx = #{idx}-->
+    <!--            <if test="doneYn != 'Y'">-->
+    <!--                AND delete_yn = 'N'-->
+    <!--            </if>-->
+    <!--    </select>-->
+
+    <!--    <update id="updateList" parameterType="java.util.List">-->
+    <!--        <foreach collection="list" item="todoEntity" separator=";">-->
+    <!--            UPDATE 	TODO-->
+    <!--            SET     content = #{todoEntity.content},-->
+    <!--                    done_yn = #{todoEntity.doneYn},-->
+    <!--                    delete_yn = #{todoEntity.deleteYn},-->
+    <!--                    update_date = #{todoEntity.updateDate},-->
+    <!--                    delete_date = #{todoEntity.deleteDate}-->
+    <!--            WHERE	idx = #{todoEntity.idx}-->
+    <!--        </foreach>-->
+    <!--    </update>-->
+</mapper>
