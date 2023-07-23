@@ -24,7 +24,7 @@ public class SecurityConfig {
                         config.antMatchers("/h2/**")
                                 .permitAll()
                                 .and()
-                                .headers().frameOptions().sameOrigin();
+                                .headers(headers -> headers.frameOptions().sameOrigin());
                     } catch (Exception e) {
                         throw new RuntimeException(e);
                     }
