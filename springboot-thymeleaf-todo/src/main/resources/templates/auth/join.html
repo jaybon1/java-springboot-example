@@ -58,7 +58,7 @@
                       </span>
                       <input
                         type="password"
-                        id="pw"
+                        id="password"
                         class="form-control"
                         aria-describedby="pwAddOn"
                       />
@@ -71,7 +71,7 @@
                       </span>
                       <input
                         type="password"
-                        id="pw2"
+                        id="password2"
                         class="form-control"
                         aria-describedby="pw2AddOn"
                       />
@@ -109,13 +109,14 @@
 
       // 유저 정보가 담긴 태그를 id로 가져옴
       const idElement = document.getElementById("id");
-      const pwElement = document.getElementById("pw");
-      const simpleDescElement = document.getElementById("simpleDesc");
+      const pwElement = document.getElementById("password");
 
       // 유저 정보를 객체로 만듬
-      const user = {
-        id: idElement.value,
-        pw: pwElement.value,
+      const dto = {
+        user : {
+            id: idElement.value,
+            password: pwElement.value,
+        }
       };
 
       //  rest 통신
@@ -124,11 +125,11 @@
         headers: {
           "Content-Type": "application/json;charset=utf-8",
         },
-        body: JSON.stringify(user),
+        body: JSON.stringify(dto),
       })
         .then((res) =>  res.json())
         .then((result) => {
-          if (result.code == 0) {
+          if (result.code === 0) {
             // 회원 가입 완료 시 로그인 페이지로 이동
             alert(result.message);
             location.replace("/auth/login");
@@ -145,8 +146,8 @@
     const validateFields = () => {
       // id 속성을 이용해서 해당하는 요소를 가져온다.
       const idElement = document.getElementById("id");
-      const pwElement = document.getElementById("pw");
-      const pw2Element = document.getElementById("pw2");
+      const pwElement = document.getElementById("password");
+      const pw2Element = document.getElementById("password2");
 
       // 값들이 비어있는지 확인
       if (idElement.value === "") {

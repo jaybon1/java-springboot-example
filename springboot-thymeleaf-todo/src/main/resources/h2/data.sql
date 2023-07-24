@@ -1,6 +1,6 @@
 INSERT INTO `user` (`idx`, `id`, `password`, `create_date`)
-VALUES (1, 'admin', '$2a$12$s8lUT6v394zgZHQuaw097OckZQpxAHAyhS.tKRHdTOenCYX/43VR6', now()),
-       (2, 'jaybon', '$2a$12$s8lUT6v394zgZHQuaw097OckZQpxAHAyhS.tKRHdTOenCYX/43VR6', now());
+VALUES (1, 'admin', '123', now()),
+       (2, 'test', '123', now());
 
 
 INSERT INTO `user_role` (`user_idx`, `role`, `create_date`)

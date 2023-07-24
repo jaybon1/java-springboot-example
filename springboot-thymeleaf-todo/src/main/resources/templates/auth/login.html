@@ -27,8 +27,6 @@
       href="https://use.fontawesome.com/releases/v5.15.2/css/all.css"
   />
 
-  <script src="https://accounts.google.com/gsi/client" async defer></script>
-
   <title>로그인</title>
 </head>
 
@@ -59,7 +57,7 @@
               <span id="pwAddOn" class="input-group-text">비밀번호</span>
               <input
                   type="password"
-                  id="pw"
+                  id="password"
                   class="form-control"
                   aria-describedby="pwAddOn"
               />
@@ -100,21 +98,8 @@
 <!-- Custom scripts -->
 <script type="text/javascript">
 
-    const kakaoLogin = () => {
-        // 여러명이 같은 컴퓨터 사용 시 소셜
-        // https://rootjs.tistory.com/73
-        // https://accounts.kakao.com/login?continue=
-        // https://kauth.kakao.com/oauth/authorize?response_type=code&client_id=42940caedbd4745dfcba33f777935238&redirect_uri=http://localhost:8070/api/v1/oauth2/kakao
-        window.open(
-            "https://accounts.kakao.com/login?continue=https%3A%2F%2Fkauth.kakao.com%2Foauth%2Fauthorize%3Fresponse_type%3Dcode%26client_id%3D42940caedbd4745dfcba33f777935238%26redirect_uri%3Dhttp%3A%2F%2Flocalhost%3A8070%2Fapi%2Fv1%2Foauth2%2Fkakao",
-            "카카오 로그인",
-            "width = 500, height = 700"
-        );
-    }
-
-
     // 비밀번호 입력창에서 엔터키를 치면 로그인 요청하는 함수
-    document.querySelector("#pw").addEventListener("keyup", (event) => {
+    document.querySelector("#password").addEventListener("keyup", (event) => {
         if (event.keyCode === 13) {
             requestLogin();
         }
@@ -130,31 +115,60 @@
 
         // id속성을 이용해서 태그를 가져옴
         const idElement = document.getElementById("id");
-        const pwElement = document.getElementById("pw");
+        const pwElement = document.getElementById("password");
         const rememberMeElement = document.getElementById("rememberMe");
 
         if (rememberMeElement.checked) {
             localStorage.setItem("rememberId", idElement.value);
         }
 
-        const formData = new FormData();
-        formData.append("id", idElement.value);
-        formData.append("pw", pwElement.value);
+        const dto = {
+            user : {
+                id: idElement.value,
+                password: pwElement.value,
+            }
+        };
 
-        const form = document.createElement('form');
-        form.action = '/login-process';
-        form.method = 'POST';
+        fetch("/api/v1/auth/login", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json;charset=utf-8",
+            },
+            body: JSON.stringify(dto),
+        })
+            .then((res) =>  res.json())
+            .then((result) => {
+                alert(result.message);
+                if (result.code === 0) {
+                    location.replace("/");
+                } else if (result.code === 1) {
+                    idElement.focus();
+                } else if (result.code === 2) {
+                    pwElement.focus();
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+            });
 
-        for (const [key, value] of formData.entries()) {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = key;
-            input.value = value;
-            form.appendChild(input);
-        }
-
-        document.body.appendChild(form);
-        form.submit();
+        // const formData = new FormData();
+        // formData.append("id", idElement.value);
+        // formData.append("pw", pwElement.value);
+        //
+        // const form = document.createElement('form');
+        // form.action = '/login-process';
+        // form.method = 'POST';
+        //
+        // for (const [key, value] of formData.entries()) {
+        //     const input = document.createElement('input');
+        //     input.type = 'hidden';
+        //     input.name = key;
+        //     input.value = value;
+        //     form.appendChild(input);
+        // }
+        //
+        // document.body.appendChild(form);
+        // form.submit();
 
 
     };
@@ -163,7 +177,7 @@
     const validateFields = () => {
         // id속성으로 요소를 가져옴
         const idElement = document.getElementById("id");
-        const pwElement = document.getElementById("pw");
+        const pwElement = document.getElementById("password");
 
         if (idElement.value === "") {
             alert("아이디를 입력해주세요.");
@@ -184,7 +198,7 @@
     const setLoginPage = () => {
         // 창이 켜지면 아이디 입력창에 포커스가 가도록 설정
         const idElement = document.getElementById("id");
-        idElement.focus();
+        const pwElement = document.getElementById("password");
 
         // 아이디 기억하기 체크박스가 체크되어있으면 아이디 입력창에 아이디를 넣어줌
         const rememberId = localStorage.getItem("rememberId");
@@ -193,14 +207,9 @@
 
             idElement.value = rememberId;
             rememberMeElement.checked = true;
-        }
-
-        // 에러 메시지 확인하기
-        const queryString = window.location.search;
-        const urlParams = new URLSearchParams(queryString);
-        const message = urlParams.get('message');
-        if (message != null && message != "") {
-            alert(message);
+            pwElement.focus();
+        } else {
+            idElement.focus();
         }
     };
 </script>

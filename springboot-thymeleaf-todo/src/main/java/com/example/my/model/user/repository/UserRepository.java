@@ -10,4 +10,6 @@ public interface UserRepository extends JpaRepository<UserEntity, Long> {
     Optional<UserEntity> findById(String id);
 
     Optional<UserEntity> findByIdAndDeleteDateIsNull(String id);
+
+    Optional<UserEntity> findByIdxAndDeleteDateIsNull(Long idx);
 }

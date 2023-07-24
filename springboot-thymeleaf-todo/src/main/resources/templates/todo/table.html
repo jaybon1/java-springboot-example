@@ -15,7 +15,7 @@
   />
   <link
       rel="stylesheet"
-      href="/css/todoList.css"
+      href="/css/todo-table.css"
   />
   <title>todoList</title>
 </head>
@@ -23,11 +23,11 @@
 <nav class="navbar navbar-default">
   <div class="container-fluid">
     <div class="navbar-header">
-      <a class="navbar-brand" href="#">
-        <span id="userId"></span>'s work
+      <a class="navbar-brand" href="javascript:void(0)">
+        <span id="userId" th:text="${session.loginUserDTO.user.id}"></span>'s work
       </a>
     </div>
-    <button type="button" onclick="javascript:location.replace('/logout')" class="btn btn-default navbar-btn navbar-right">logout</button>
+    <button type="button" onclick="logout()" class="btn btn-default navbar-btn navbar-right">logout</button>
   </div>
 </nav>
 <div class="container">
@@ -43,10 +43,22 @@
             autofocus
         />
         <hr/>
-        <ul id="todoList" class="list-unstyled"></ul>
+        <ul id="todoList" class="list-unstyled">
+          <li class="ui-state-default" th:each="todo : ${dto.todoList}">
+            <div class="checkbox">
+              <label>
+                <input
+                    th:onchange="setDoneY([[${todo.idx}]])"
+                    type="checkbox"
+                />
+                <span th:text="${todo.content}"></span>
+              </label>
+            </div>
+          </li>
+        </ul>
         <div class="todo-footer">
           <strong>
-            <span id="todoCount" class="count-todos"></span>
+            <span id="todoCount" class="count-todos" th:text="${dto.todoList.size()}"></span>
           </strong>
           항목 남았음
         </div>
@@ -54,139 +66,218 @@
     </div>
     <div class="col-md-6">
       <div class="todolist">
-        <h1>Already DONE</h1>
-        <ul id="doneList" class="list-unstyled"></ul>
+        <h1>DONE LIST</h1>
+        <ul id="doneList" class="list-unstyled">
+          <li th:each="todo : ${dto.doneList}">
+            <div class="checkbox">
+              <label>
+                <input
+                    th:onchange="setDoneN([[${todo.idx}]])"
+                    class="remove-item"
+                    type="checkbox"
+                />
+                <span th:text="${todo.content}"></span>
+              </label>
+              <button
+                  th:onclick="setDelete([[${todo.idx}]])"
+                  class="remove-item btn btn-default btn-xs pull-right"
+              >
+                <span class="glyphicon glyphicon-remove"></span>
+              </button>
+            </div>
+          </li>
+        </ul>
       </div>
     </div>
   </div>
 </div>
 </body>
-<!--<script>-->
-<!--    console.log("스타일 참고", "https://bootsnipp.com/snippets/QbN51");-->
+<script>
+    const logout = () => {
+        location.replace('/auth/logout');
+    }
 
-<!--    const init = () => {-->
-<!--        $.ajax({-->
-<!--            type: "get",-->
-<!--            url: `/api/v3/todo`,-->
-<!--            contentType: "application/json; charset=utf-8",-->
-<!--        })-->
-<!--            .done((response) => {-->
-<!--                if (response.code === 0) {-->
-<!--                    const userId = response.data.user.id;-->
-<!--                    const todoList = response.data.todoList.filter((todo) => todo.doneYn === "N");-->
-<!--                    const todoSize = todoList.length;-->
-<!--                    const doneList = response.data.todoList.filter((todo) => todo.doneYn === "Y");-->
+</script>
 
-<!--                    $("#userId").text(userId);-->
+<script>
+    console.log("스타일 참고", "https://bootsnipp.com/snippets/QbN51");
 
-<!--                    $("#todoList").empty();-->
+    const init = () => {
+        fetch(`/api/v1/todo`)
+            .then((response) => response.json())
+            .then((result) => {
+                if (result.code === 0) {
 
-<!--                    for (const todo of todoList) {-->
-<!--                        $("#todoList").append(-->
-<!--                            `-->
-<!--                            <li class="ui-state-default">-->
-<!--                                <div class="checkbox">-->
-<!--                                    <label>-->
-<!--                                        <input-->
-<!--                                            onchange="setDone(` + todo.idx + `)"-->
-<!--                                            type="checkbox"-->
-<!--                                        />-->
-<!--                                        <span>` + todo.content + `</span>-->
-<!--                                    </label>-->
-<!--                                </div>-->
-<!--                            </li>-->
-<!--                            `-->
-<!--                        );-->
-<!--                    }-->
+                    const todoList = result.data.todoList;
+                    const doneList = result.data.doneList;
 
-<!--                    $(`#todoCount`).text(todoSize);-->
+                    document.querySelector("#todoList").innerHTML = "";
 
-<!--                    $("#doneList").empty();-->
+                    for (const todo of todoList) {
+                        document.querySelector("#todoList").insertAdjacentHTML(
+                            "beforeend",
+                            `
+                            <li class="ui-state-default">
+                                <div class="checkbox">
+                                    <label>
+                                        <input
+                                            onchange="setDoneY(${todo.idx})"
+                                            type="checkbox"
+                                        />
+                                        <span>${todo.content}</span>
+                                    </label>
+                                </div>
+                            </li>
+                            `
+                        );
+                    }
 
-<!--                    for (const todo of doneList) {-->
-<!--                        $("#doneList").append(-->
-<!--                            `-->
-<!--                            <li>-->
-<!--                                <div class="checkbox">-->
-<!--                                    <label>-->
-<!--                                        <input-->
-<!--                                            onchange="setDone(` + todo.idx + `)"-->
-<!--                                            class="remove-item"-->
-<!--                                            type="checkbox"-->
-<!--                                        />-->
-<!--                                        <span>` + todo.content + `</span>-->
-<!--                                    </label>-->
-<!--                                    <button-->
-<!--                                        onclick="setDelete(` + todo.idx + `)"-->
-<!--                                        class="remove-item btn btn-default btn-xs pull-right"-->
-<!--                                    >-->
-<!--                                        <span class="glyphicon glyphicon-remove"></span>-->
-<!--                                    </button>-->
-<!--                                </div>-->
-<!--                            </li>-->
-<!--                            `-->
-<!--                        );-->
-<!--                    }-->
-<!--                } else {-->
-<!--                    console.log(result.message);-->
-<!--                }-->
-<!--            })-->
-<!--            .fail((error) => {-->
-<!--                alert(error.message);-->
-<!--            });-->
-<!--    };-->
-<!--    init();-->
+                    document.querySelector("#todoCount").innerText = todoList.length;
 
-<!--    $("#content").on("keyup", (e) => {-->
-<!--        if (e.which === 13) {-->
-<!--            if ($("#content").val() !== "") {-->
-<!--                const data = {-->
-<!--                    content: $("#content").val(),-->
-<!--                };-->
+                    document.querySelector("#doneList").innerHTML = "";
 
-<!--                $.ajax({-->
-<!--                    type: "post",-->
-<!--                    url: `/api/v3/todo`,-->
-<!--                    data: JSON.stringify(data),-->
-<!--                    contentType: "application/json; charset=utf-8",-->
-<!--                })-->
-<!--                    .done((response) => {-->
-<!--                        $("#content").val("");-->
-<!--                        init();-->
-<!--                    })-->
-<!--                    .fail((error) => {-->
-<!--                        alert(error.message);-->
-<!--                    });-->
-<!--            }-->
-<!--        }-->
-<!--    });-->
+                    for (const todo of doneList) {
+                        document.querySelector("#doneList").insertAdjacentHTML(
+                            "beforeend",
+                            `
+                            <li>
+                                <div class="checkbox">
+                                    <label>
+                                        <input
+                                            onchange="setDoneN(${todo.idx})"
+                                            class="remove-item"
+                                            type="checkbox"
+                                        />
+                                        <span>${todo.content}</span>
+                                    </label>
+                                    <button
+                                        onclick="setDelete(${todo.idx})"
+                                        class="remove-item btn btn-default btn-xs pull-right"
+                                    >
+                                        <span class="glyphicon glyphicon-remove"></span>
+                                    </button>
+                                </div>
+                            </li>
+                            `
+                        );
+                    }
+                } else {
+                    console.log(result.message);
+                }
+            })
+            .catch((error) => {
+                alert(error.message);
+            });
+    };
+    init();
 
-<!--    const setDone = (idx) => {-->
-<!--        $.ajax({-->
-<!--            type: "put",-->
-<!--            url: `/api/v3/todo/` + idx,-->
-<!--            contentType: "application/json; charset=utf-8",-->
-<!--        })-->
-<!--            .done((response) => {-->
-<!--                init();-->
-<!--            })-->
-<!--            .fail((error) => {-->
-<!--                alert(error.message);-->
-<!--            });-->
-<!--    };-->
+    const contentInput = document.querySelector("#content");
+    contentInput.addEventListener("keyup", (e) => {
+        if (e.code !== "Enter") return;
+        if (contentInput.value === "") return;
 
-<!--    const setDelete = (idx) => {-->
-<!--        $.ajax({-->
-<!--            type: "delete",-->
-<!--            url: `/api/v3/todo/` + idx,-->
-<!--            contentType: "application/json; charset=utf-8",-->
-<!--        })-->
-<!--            .done((response) => {-->
-<!--                init();-->
-<!--            })-->
-<!--            .fail((error) => {-->
-<!--                alert(error.message);-->
-<!--            });-->
-<!--    };-->
-<!--</script>-->
+        const dto = {
+            todo: {
+                content: contentInput.value
+            }
+        };
+
+        fetch(`/api/v1/todo`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+            },
+            body: JSON.stringify(dto),
+        })
+            .then((response) => response.json())
+            .then((result) => {
+                if (result.code === 0) {
+                    contentInput.value = "";
+                    init();
+                } else {
+                    alert(result.message);
+                }
+            })
+            .catch((error) => {
+                alert(error.message);
+            });
+    });
+
+
+    const setDoneY = (idx) => {
+
+        const dto = {
+            todo: {
+                doneYn: "Y"
+            }
+        }
+
+        fetch(`/api/v1/todo/` + idx, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+            },
+            body: JSON.stringify(dto),
+        })
+            .then((response) => response.json())
+            .then((result) => {
+                if (result.code === 0) {
+                    init();
+                } else {
+                    alert(result.message);
+                }
+            })
+            .catch((error) => {
+                alert(error.message);
+            });
+    };
+
+    const setDoneN = (idx) => {
+
+        const dto = {
+            todo: {
+                doneYn: "N"
+            }
+        }
+
+        fetch(`/api/v1/todo/` + idx, {
+            method: 'PUT',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+            },
+            body: JSON.stringify(dto),
+        })
+            .then((response) => response.json())
+            .then((result) => {
+                if (result.code === 0) {
+                    init();
+                } else {
+                    alert(result.message);
+                }
+            })
+            .catch((error) => {
+                alert(error.message);
+            });
+    };
+
+    const setDelete = (idx) => {
+        fetch(`/api/v1/todo/` + idx, {
+            method: 'DELETE',
+            headers: {
+                'Content-Type': 'application/json;charset=utf-8',
+            },
+        })
+            .then((response) => response.json())
+            .then((result) => {
+                if (result.code === 0) {
+                    init();
+                } else {
+                    alert(result.message);
+                }
+            })
+            .catch((error) => {
+                alert(error.message);
+            });
+    };
+</script>
 </html>

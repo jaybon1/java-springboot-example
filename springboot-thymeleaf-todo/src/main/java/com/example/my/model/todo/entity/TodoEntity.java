@@ -38,4 +38,13 @@ public class TodoEntity {
 
     @Column(name = "delete_date")
     private LocalDateTime deleteDate;
+
+    public void setDoneYn(Character doneYn) {
+        this.doneYn = doneYn;
+        this.updateDate = LocalDateTime.now();
+    }
+
+    public void setDeleteDate(LocalDateTime deleteDate) {
+        this.deleteDate = deleteDate;
+    }
 }

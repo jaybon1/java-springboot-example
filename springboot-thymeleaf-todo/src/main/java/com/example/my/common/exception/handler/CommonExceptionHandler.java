@@ -26,7 +26,7 @@ public class CommonExceptionHandler {
 
         return new ResponseEntity<>(
                 ResponseDTO.builder()
-                .code(-1)
+                .code(1)
                 .message("요청 데이터가 유효하지 않습니다.")
                 .data(errorMap)
                 .build(),
@@ -39,7 +39,7 @@ public class CommonExceptionHandler {
     public HttpEntity<?> handleEntityNotFoundException(){
         return new ResponseEntity<>(
                 ResponseDTO.builder()
-                        .code(-1)
+                        .code(1)
                         .message("요청 데이터가 유효하지 않습니다.")
                         .build(),
                 HttpStatus.BAD_REQUEST
@@ -51,7 +51,7 @@ public class CommonExceptionHandler {
 
         return new ResponseEntity<>(
                 ResponseDTO.builder()
-                        .code(-1)
+                        .code(1)
                         .message(exception.getMessage())
                         .build(),
                 HttpStatus.BAD_REQUEST
@@ -68,7 +68,7 @@ public class CommonExceptionHandler {
 
         return new ResponseEntity<>(
                 ResponseDTO.builder()
-                        .code(-1)
+                        .code(1)
                         .message(message)
                         .build(),
                 HttpStatus.INTERNAL_SERVER_ERROR
