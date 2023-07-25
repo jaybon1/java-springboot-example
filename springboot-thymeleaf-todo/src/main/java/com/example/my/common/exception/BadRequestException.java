@@ -6,4 +6,8 @@ public class BadRequestException extends RuntimeException {
         super(message);
     }
 
+    public BadRequestException() {
+        super("잘못된 요청입니다.");
+    }
+
 }

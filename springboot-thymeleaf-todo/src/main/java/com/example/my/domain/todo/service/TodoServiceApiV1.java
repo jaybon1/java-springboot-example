@@ -2,6 +2,7 @@ package com.example.my.domain.todo.service;
 
 import com.example.my.common.dto.LoginUserDTO;
 import com.example.my.common.dto.ResponseDTO;
+import com.example.my.common.exception.BadRequestException;
 import com.example.my.domain.todo.dto.ReqTodoTableInsertDTO;
 import com.example.my.domain.todo.dto.ReqTodoTableUpdateDoneYnDTO;
 import com.example.my.domain.todo.dto.ResTodoTableDTO;
@@ -45,25 +46,13 @@ public class TodoServiceApiV1 {
     public ResponseEntity<?> insertTodoTableData(ReqTodoTableInsertDTO dto, LoginUserDTO loginUserDTO) {
 
         if (dto == null || dto.getTodo() == null || dto.getTodo().getContent() == null || dto.getTodo().getContent().trim().length() == 0) {
-            return new ResponseEntity<>(
-                    ResponseDTO.builder()
-                            .code(1)
-                            .message("할 일을 입력해주세요.")
-                            .build(),
-                    HttpStatus.BAD_REQUEST
-            );
+            throw new BadRequestException("할 일을 입력해주세요.");
         }
 
         Optional<UserEntity> userEntityOptional = userRepository.findByIdxAndDeleteDateIsNull(loginUserDTO.getUser().getIdx());
 
         if (userEntityOptional.isEmpty()) {
-            return new ResponseEntity<>(
-                    ResponseDTO.builder()
-                            .code(1)
-                            .message("존재하지 않는 사용자입니다.")
-                            .build(),
-                    HttpStatus.BAD_REQUEST
-            );
+            throw new BadRequestException("존재하지 않는 사용자입니다.");
         }
 
         TodoEntity todoEntity = TodoEntity.builder()
@@ -90,25 +79,13 @@ public class TodoServiceApiV1 {
         Optional<TodoEntity> todoEntityOptional = todoRepository.findByIdxAndDeleteDateIsNull(todoIdx);
 
         if (todoEntityOptional.isEmpty()) {
-            return new ResponseEntity<>(
-                    ResponseDTO.builder()
-                            .code(1)
-                            .message("존재하지 않는 할 일입니다.")
-                            .build(),
-                    HttpStatus.BAD_REQUEST
-            );
+            throw new BadRequestException("존재하지 않는 할 일입니다.");
         }
 
         TodoEntity todoEntity = todoEntityOptional.get();
 
         if (!todoEntity.getUserEntity().getIdx().equals(loginUserDTO.getUser().getIdx())) {
-            return new ResponseEntity<>(
-                    ResponseDTO.builder()
-                            .code(1)
-                            .message("권한이 없습니다.")
-                            .build(),
-                    HttpStatus.BAD_REQUEST
-            );
+            throw new BadRequestException("권한이 없습니다.");
         }
 
         todoEntity.setDoneYn(dto.getTodo().getDoneYn());
@@ -128,25 +105,13 @@ public class TodoServiceApiV1 {
         Optional<TodoEntity> todoEntityOptional = todoRepository.findByIdxAndDeleteDateIsNull(todoIdx);
 
         if (todoEntityOptional.isEmpty()) {
-            return new ResponseEntity<>(
-                    ResponseDTO.builder()
-                            .code(1)
-                            .message("존재하지 않는 할 일입니다.")
-                            .build(),
-                    HttpStatus.BAD_REQUEST
-            );
+            throw new BadRequestException("존재하지 않는 할 일입니다.");
         }
 
         TodoEntity todoEntity = todoEntityOptional.get();
 
         if (!todoEntity.getUserEntity().getIdx().equals(loginUserDTO.getUser().getIdx())) {
-            return new ResponseEntity<>(
-                    ResponseDTO.builder()
-                            .code(1)
-                            .message("권한이 없습니다.")
-                            .build(),
-                    HttpStatus.BAD_REQUEST
-            );
+            throw new BadRequestException("권한이 없습니다.");
         }
 
         todoEntity.setDeleteDate(LocalDateTime.now());

@@ -3,6 +3,7 @@ package com.example.my.common.exception.handler;
 import com.example.my.common.dto.ResponseDTO;
 import com.example.my.common.exception.BadRequestException;
 import com.example.my.common.exception.EntityNotFoundException;
+import com.example.my.common.exception.InvalidSessionException;
 import org.springframework.http.HttpEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -41,6 +42,17 @@ public class CommonExceptionHandler {
                 ResponseDTO.builder()
                         .code(1)
                         .message("요청 데이터가 유효하지 않습니다.")
+                        .build(),
+                HttpStatus.BAD_REQUEST
+        );
+    }
+
+    @ExceptionHandler(InvalidSessionException.class)
+    public HttpEntity<?> handleInvalidSessionException(Exception exception){
+        return new ResponseEntity<>(
+                ResponseDTO.builder()
+                        .code(1)
+                        .message("로그인이 필요합니다.")
                         .build(),
                 HttpStatus.BAD_REQUEST
         );

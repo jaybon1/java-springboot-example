@@ -1,14 +1,13 @@
 package com.example.my.domain.todo.controller;
 
 import com.example.my.common.dto.LoginUserDTO;
-import com.example.my.common.dto.ResponseDTO;
+import com.example.my.common.exception.InvalidSessionException;
 import com.example.my.domain.todo.dto.ReqTodoTableInsertDTO;
 import com.example.my.domain.todo.dto.ReqTodoTableUpdateDoneYnDTO;
-import com.example.my.domain.todo.dto.ResTodoTableDTO;
 import com.example.my.domain.todo.service.TodoServiceApiV1;
 import jakarta.servlet.http.HttpSession;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -21,61 +20,24 @@ public class TodoControllerApiV1 {
 
     @GetMapping
     public ResponseEntity<?> getTodoTableData(HttpSession session) {
-
-        if (session.getAttribute("loginUserDTO") == null) {
-            return new ResponseEntity<>(
-                    ResponseDTO.builder()
-                            .code(1)
-                            .message("로그인이 필요합니다.")
-                            .build(),
-                    HttpStatus.BAD_REQUEST
-            );
-        }
-
-        return todoServiceApiV1.getTodoTableData((LoginUserDTO) session.getAttribute("loginUserDTO"));
+        return todoServiceApiV1.getTodoTableData(getLoginUserDTO(session));
     }
 
     @PostMapping
     public ResponseEntity<?> insertTodoTableData(
-            @RequestBody ReqTodoTableInsertDTO dto,
+            @Valid @RequestBody ReqTodoTableInsertDTO dto,
             HttpSession session
     ) {
-
-        if (session.getAttribute("loginUserDTO") == null) {
-            return new ResponseEntity<>(
-                    ResponseDTO.builder()
-                            .code(1)
-                            .message("로그인이 필요합니다.")
-                            .build(),
-                    HttpStatus.BAD_REQUEST
-            );
-        }
-
-        LoginUserDTO loginUserDTO = (LoginUserDTO) session.getAttribute("loginUserDTO");
-
-        return todoServiceApiV1.insertTodoTableData(dto, loginUserDTO);
+        return todoServiceApiV1.insertTodoTableData(dto, getLoginUserDTO(session));
     }
 
     @PutMapping("/{todoIdx}")
     public ResponseEntity<?> updateTodoTableData(
             @PathVariable Long todoIdx,
-            @RequestBody ReqTodoTableUpdateDoneYnDTO dto,
+            @Valid @RequestBody ReqTodoTableUpdateDoneYnDTO dto,
             HttpSession session
     ) {
-
-        if (session.getAttribute("loginUserDTO") == null) {
-            return new ResponseEntity<>(
-                    ResponseDTO.builder()
-                            .code(1)
-                            .message("로그인이 필요합니다.")
-                            .build(),
-                    HttpStatus.BAD_REQUEST
-            );
-        }
-
-        LoginUserDTO loginUserDTO = (LoginUserDTO) session.getAttribute("loginUserDTO");
-
-        return todoServiceApiV1.updateTodoTableData(todoIdx, dto, loginUserDTO);
+        return todoServiceApiV1.updateTodoTableData(todoIdx, dto, getLoginUserDTO(session));
     }
 
     @DeleteMapping("/{todoIdx}")
@@ -83,21 +45,14 @@ public class TodoControllerApiV1 {
             @PathVariable Long todoIdx,
             HttpSession session
     ) {
-
-        if (session.getAttribute("loginUserDTO") == null) {
-            return new ResponseEntity<>(
-                    ResponseDTO.builder()
-                            .code(1)
-                            .message("로그인이 필요합니다.")
-                            .build(),
-                    HttpStatus.BAD_REQUEST
-            );
-        }
-
-        LoginUserDTO loginUserDTO = (LoginUserDTO) session.getAttribute("loginUserDTO");
-
-        return todoServiceApiV1.deleteTodoTableData(todoIdx, loginUserDTO);
+        return todoServiceApiV1.deleteTodoTableData(todoIdx, getLoginUserDTO(session));
     }
 
+    private static LoginUserDTO getLoginUserDTO(HttpSession session) {
+        if (session.getAttribute("dto") == null) {
+            throw new InvalidSessionException();
+        }
+        return (LoginUserDTO) session.getAttribute("dto");
+    }
 
 }

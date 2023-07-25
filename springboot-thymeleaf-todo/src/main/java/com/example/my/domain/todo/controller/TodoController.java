@@ -19,12 +19,12 @@ public class TodoController {
     public ModelAndView todoTablePage(HttpSession session) {
         ModelAndView modelAndView = new ModelAndView();
 
-        if (session.getAttribute("loginUserDTO") == null) {
+        if (session.getAttribute("dto") == null) {
             modelAndView.setViewName("redirect:/auth/login");
             return modelAndView;
         }
 
-        LoginUserDTO loginUserDTO = (LoginUserDTO) session.getAttribute("loginUserDTO");
+        LoginUserDTO loginUserDTO = (LoginUserDTO) session.getAttribute("dto");
         ResTodoTableDTO dto = todoService.getTodoTableData(loginUserDTO);
         modelAndView.addObject("dto", dto);
         modelAndView.setViewName("todo/table");
