@@ -1,16 +1,16 @@
 package com.example.my.domain.auth.controller;
 
-import com.example.my.domain.auth.dto.ReqJoinDTO;
-import com.example.my.domain.auth.dto.ReqLoginDTO;
-import com.example.my.domain.auth.service.AuthServiceApiV1;
-import jakarta.servlet.http.HttpSession;
-import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+
+import com.example.my.domain.auth.dto.ReqJoinDTO;
+import com.example.my.domain.auth.service.AuthServiceApiV1;
+
+import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 
 @RestController
 @RequiredArgsConstructor

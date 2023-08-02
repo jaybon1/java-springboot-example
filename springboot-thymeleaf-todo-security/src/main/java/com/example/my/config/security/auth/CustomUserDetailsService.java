@@ -1,18 +1,21 @@
 package com.example.my.config.security.auth;
 
-import com.example.my.common.dto.LoginUserDTO;
-import com.example.my.model.user.entity.UserEntity;
-import com.example.my.model.user.repository.UserRepository;
-import lombok.RequiredArgsConstructor;
+import java.util.Optional;
+
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import java.util.Optional;
+import com.example.my.model.user.entity.UserEntity;
+import com.example.my.model.user.repository.UserRepository;
+
+import lombok.RequiredArgsConstructor;
 
 @Service
 @RequiredArgsConstructor
+@Transactional(readOnly = true)
 public class CustomUserDetailsService implements UserDetailsService {
 
     private final UserRepository userRepository;
@@ -25,7 +28,7 @@ public class CustomUserDetailsService implements UserDetailsService {
             throw new UsernameNotFoundException("아이디를 정확히 입력해주세요.");
         }
 
-        return new CustomUserDetails(LoginUserDTO.of(userEntityOptional.get()));
+        return CustomUserDetails.of(userEntityOptional.get());
 
     }
 }

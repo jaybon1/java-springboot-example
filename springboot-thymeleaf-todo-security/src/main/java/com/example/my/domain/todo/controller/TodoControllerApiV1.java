@@ -1,17 +1,23 @@
 package com.example.my.domain.todo.controller;
 
-import com.example.my.common.dto.LoginUserDTO;
-import com.example.my.common.exception.InvalidSessionException;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.web.bind.annotation.DeleteMapping;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
+
 import com.example.my.config.security.auth.CustomUserDetails;
 import com.example.my.domain.todo.dto.ReqTodoTableInsertDTO;
 import com.example.my.domain.todo.dto.ReqTodoTableUpdateDoneYnDTO;
 import com.example.my.domain.todo.service.TodoServiceApiV1;
-import jakarta.servlet.http.HttpSession;
+
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.annotation.AuthenticationPrincipal;
-import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequiredArgsConstructor
@@ -22,7 +28,7 @@ public class TodoControllerApiV1 {
 
     @GetMapping
     public ResponseEntity<?> getTodoTableData(@AuthenticationPrincipal CustomUserDetails customUserDetails) {
-        return todoServiceApiV1.getTodoTableData(customUserDetails.getLoginUserDTO());
+        return todoServiceApiV1.getTodoTableData(customUserDetails);
     }
 
     @PostMapping
@@ -30,7 +36,7 @@ public class TodoControllerApiV1 {
             @Valid @RequestBody ReqTodoTableInsertDTO dto,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-        return todoServiceApiV1.insertTodoTableData(dto, customUserDetails.getLoginUserDTO());
+        return todoServiceApiV1.insertTodoTableData(dto, customUserDetails);
     }
 
     @PutMapping("/{todoIdx}")
@@ -39,7 +45,7 @@ public class TodoControllerApiV1 {
             @Valid @RequestBody ReqTodoTableUpdateDoneYnDTO dto,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-        return todoServiceApiV1.updateTodoTableData(todoIdx, dto, customUserDetails.getLoginUserDTO());
+        return todoServiceApiV1.updateTodoTableData(todoIdx, dto, customUserDetails);
     }
 
     @DeleteMapping("/{todoIdx}")
@@ -47,7 +53,7 @@ public class TodoControllerApiV1 {
             @PathVariable Long todoIdx,
             @AuthenticationPrincipal CustomUserDetails customUserDetails
     ) {
-        return todoServiceApiV1.deleteTodoTableData(todoIdx, customUserDetails.getLoginUserDTO());
+        return todoServiceApiV1.deleteTodoTableData(todoIdx, customUserDetails);
     }
 
 }

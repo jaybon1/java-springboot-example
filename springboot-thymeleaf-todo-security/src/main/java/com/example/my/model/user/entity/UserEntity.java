@@ -36,7 +36,7 @@ public class UserEntity {
     @Column(name = "delete_date")
     private LocalDateTime deleteDate;
 
-    @OneToMany(mappedBy = "userEntity", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "userEntity", fetch = FetchType.LAZY)
     private List<UserRoleEntity> userRoleEntityList;
 
     @OneToMany(mappedBy = "userEntity", fetch = FetchType.LAZY)

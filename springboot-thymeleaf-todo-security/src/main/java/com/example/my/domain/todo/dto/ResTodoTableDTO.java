@@ -1,12 +1,13 @@
 package com.example.my.domain.todo.dto;
 
+import java.util.List;
+
 import com.example.my.model.todo.entity.TodoEntity;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
-
-import java.util.List;
 
 @NoArgsConstructor
 @AllArgsConstructor
@@ -21,19 +22,16 @@ public class ResTodoTableDTO {
         return ResTodoTableDTO.builder()
                 .todoList(
                         todoEntityList.stream()
-                                .filter(todoEntity -> todoEntity.getDoneYn().equals('N'))
+                                .filter(todoEntity -> todoEntity.getDoneYn().equals("N"))
                                 .map(todoEntity -> Todo.fromEntity(todoEntity))
-                                .toList()
-                )
+                                .toList())
                 .doneList(
                         todoEntityList.stream()
-                                .filter(todoEntity -> todoEntity.getDoneYn().equals('Y'))
+                                .filter(todoEntity -> todoEntity.getDoneYn().equals("Y"))
                                 .map(todoEntity -> Todo.fromEntity(todoEntity))
-                                .toList()
-                )
+                                .toList())
                 .build();
     }
-
 
     @NoArgsConstructor
     @AllArgsConstructor
@@ -42,7 +40,7 @@ public class ResTodoTableDTO {
     public static class Todo {
         private Long idx;
         private String content;
-        private Character doneYn;
+        private String doneYn;
 
         public static Todo fromEntity(TodoEntity todoEntity) {
             return Todo.builder()
