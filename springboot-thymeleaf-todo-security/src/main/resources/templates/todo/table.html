@@ -173,7 +173,7 @@
     init();
 
     const contentInput = document.querySelector("#content");
-    contentInput.addEventListener("keyup", (e) => {
+    contentInput.addEventListener("keypress", (e) => {
         if (e.code !== "Enter") return;
         if (contentInput.value === "") return;
 
