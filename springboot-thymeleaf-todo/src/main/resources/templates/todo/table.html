@@ -24,7 +24,7 @@
   <div class="container-fluid">
     <div class="navbar-header">
       <a class="navbar-brand" href="javascript:void(0)">
-        <span id="userId" th:text="${session.dto.user.id}"></span>'s work
+        <span id="userId" th:text="${session.loginUserDTO.user.id}"></span>'s work
       </a>
     </div>
     <button type="button" onclick="logout()" class="btn btn-default navbar-btn navbar-right">logout</button>
@@ -172,7 +172,7 @@
     init();
 
     const contentInput = document.querySelector("#content");
-    contentInput.addEventListener("keyup", (e) => {
+    contentInput.addEventListener("keypress", (e) => {
         if (e.code !== "Enter") return;
         if (contentInput.value === "") return;
 
