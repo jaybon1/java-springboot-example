@@ -7,6 +7,9 @@ import lombok.*;
 import java.time.LocalDateTime;
 import java.util.List;
 
+import org.hibernate.annotations.Where;
+import org.hibernate.annotations.WhereJoinTable;
+
 @Entity
 @Table(name = "`USER`")
 @Getter
@@ -40,5 +43,6 @@ public class UserEntity {
     private List<UserRoleEntity> userRoleEntityList;
 
     @OneToMany(mappedBy = "userEntity", fetch = FetchType.LAZY)
+    @Where(clause = "delete_date IS NULL") // 조건에 맞는 엔티티만 가져오기
     private List<TodoEntity> todoEntityList;
 }
